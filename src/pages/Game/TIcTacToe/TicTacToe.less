@@ -1,0 +1,35 @@
+.tic-tac-toe {
+  text-align: center;
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(15, 30px);
+    grid-template-rows: repeat(15, 30px);
+    gap: 2px;
+    margin: 20px auto;
+    max-width: 640px;
+
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      border: 1px solid #000;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+  }
+
+  .winner {
+    margin-top: 20px;
+  }
+
+  .turn {
+    margin-top: 10px;
+  }
+}
