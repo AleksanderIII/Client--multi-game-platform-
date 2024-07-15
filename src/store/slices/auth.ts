@@ -1,77 +1,67 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface AuthState {
   username: string | null;
-  token: string | null;
   isAuthenticated: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
-  username: localStorage.getItem('username'),
-  token: localStorage.getItem('token'),
-  isAuthenticated: !!localStorage.getItem('token'),
+  username: null,
+  isAuthenticated: false,
   error: null,
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
-    setToken(state, action: PayloadAction<{ token: string, username: string }>) {
-      state.token = action.payload.token;
-      state.username = action.payload.username;
+    setAuthenticated(state, action: PayloadAction<string>) {
       state.isAuthenticated = true;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('username', action.payload.username);
+      state.username = action.payload;
     },
-    clearToken(state) {
-      state.token = null;
-      state.username = null;
+    clearAuthenticated(state) {
       state.isAuthenticated = false;
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
+      state.username = null;
     },
     login(state, action: PayloadAction<{ username: string; password: string }>) {
       // Saga will handle this
     },
-    loginSuccess(state, action: PayloadAction<{ token: string, username: string }>) {
-      state.token = action.payload.token;
-      state.username = action.payload.username;
+    loginSuccess(state, action: PayloadAction<{ username: string }>) {
       state.isAuthenticated = true;
+      state.username = action.payload.username;
       state.error = null;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('username', action.payload.username);
     },
     loginFailure(state, action: PayloadAction<string>) {
-      state.token = null;
-      state.username = null;
       state.isAuthenticated = false;
+      state.username = null;
       state.error = action.payload;
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
     },
     register(state, action: PayloadAction<{ username: string; password: string }>) {
       // Saga will handle this
     },
-    registerSuccess(state, action: PayloadAction<{ token: string, username: string }>) {
-      state.token = action.payload.token;
-      state.username = action.payload.username;
+    registerSuccess(state, action: PayloadAction<{ username: string }>) {
       state.isAuthenticated = true;
+      state.username = action.payload.username;
       state.error = null;
-      localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('username', action.payload.username);
     },
     registerFailure(state, action: PayloadAction<string>) {
-      state.token = null;
-      state.username = null;
       state.isAuthenticated = false;
+      state.username = null;
       state.error = action.payload;
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
     },
   },
 });
 
-export const { setToken, clearToken, login, loginSuccess, loginFailure, register, registerSuccess, registerFailure } = authSlice.actions;
+export const {
+  setAuthenticated,
+  clearAuthenticated,
+  login,
+  loginSuccess,
+  loginFailure,
+  register,
+  registerSuccess,
+  registerFailure,
+} = authSlice.actions;
+
 export default authSlice.reducer;

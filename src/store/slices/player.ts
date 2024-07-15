@@ -1,12 +1,36 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Player } from "../../models";
 
-const playerSlice = createSlice({
+export interface PlayersState {
+  list: Player[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: PlayersState = {
+  list: [],
+  loading: false,
+  error: null,
+};
+
+const playersSlice = createSlice({
   name: "players",
-  initialState: [],
+  initialState,
   reducers: {
-    setPlayers: (state, action) => action.payload,
+    fetchPlayers(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchPlayersSuccess(state, action: PayloadAction<Player[]>) {
+      state.loading = false;
+      state.list = action.payload;
+    },
+    fetchPlayersFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { setPlayers } = playerSlice.actions;
-export default playerSlice.reducer;
+export const { fetchPlayers, fetchPlayersSuccess, fetchPlayersFailure } = playersSlice.actions;
+export default playersSlice.reducer;

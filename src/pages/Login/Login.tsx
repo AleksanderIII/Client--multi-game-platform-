@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Typography } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
@@ -32,9 +32,9 @@ const Login: React.FC = () => {
     dispatch(loginUser(data));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
-      navigate("/"); // Перенаправляем на главную страницу после успешного входа
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 

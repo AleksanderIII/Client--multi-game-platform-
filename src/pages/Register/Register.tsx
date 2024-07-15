@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Typography } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
@@ -33,19 +33,19 @@ const Register: React.FC = () => {
 
   const onSubmit = (data: RegisterFormInputs) => {
     dispatch(registerUser(data)).then(() => {
-      // После успешной регистрации, автоматически выполняем вход
       dispatch(loginUser(data));
     });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
-      navigate("/"); // Перенаправляем на главную страницу после успешной регистрации и входа
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
   return (
     <div className="register-wrapper">
+      <h1>Register</h1>
       <Form name="register-form" onFinish={handleSubmit(onSubmit)}>
         <Form.Item
           validateStatus={errors.username ? "error" : ""}
