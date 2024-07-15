@@ -12,19 +12,19 @@ const AppLayout: React.FC = () => {
         <div className="logo" />
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1">
-            <Link to="/">Home</Link>
+            <Link to="/">Главная</Link>
           </Menu.Item>
           <Menu.Item key="2">
-            <Link to="/games">Games</Link>
+            <Link to="/games">Игры</Link>
           </Menu.Item>
           <Menu.Item key="3">
-            <Link to="/players">Players</Link>
+            <Link to="/players">Игроки</Link>
           </Menu.Item>
           <Menu.Item key="4" style={{ float: "right" }}>
-            <Link to="/login">Login</Link>
+            <Link to="/login">Вход</Link>
           </Menu.Item>
           <Menu.Item key="5" style={{ float: "right" }}>
-            <Link to="/register">Register</Link>
+            <Link to="/register">Регистрация</Link>
           </Menu.Item>
         </Menu>
       </Header>
@@ -33,8 +33,8 @@ const AppLayout: React.FC = () => {
           <Outlet /> {/* Место для отображения текущего контента */}
         </div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        ©2024 Created by Your Team
+      <Footer style={{ textAlign: "center", borderTop: "1px solid" }}>
+        ©2024 Created by Aleksandr Matyushik
       </Footer>
     </Layout>
   );
