@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "../../store";
 import { fetchGamesStart } from "../../store/slices/game";
 import { Card, Row, Col, Spin, Alert, Tag } from "antd";
@@ -9,6 +10,7 @@ const { Meta } = Card;
 
 const Games: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const games = useSelector((state: RootState) => state.games.list);
   const loading = useSelector((state: RootState) => state.games.loading);
   const error = useSelector((state: RootState) => state.games.error);
@@ -25,13 +27,22 @@ const Games: React.FC = () => {
     return <Alert message="Error" description={error} type="error" showIcon />;
   }
 
+  const handleCardClick = (name: string) => {
+    navigate(`/games/${name}`);
+  };
+
   return (
     <div className="games-container">
       <Row gutter={[16, 16]}>
         {games.length ? (
           games.map((game) => (
             <Col key={game.id} xs={24} sm={12} md={8} lg={6}>
-              <Card className="game-card" bordered={false}>
+              <Card
+                className="game-card"
+                bordered={false}
+                onClick={() => handleCardClick(game.name)}
+                hoverable
+              >
                 <div className="card-content">
                   <div className="card-cover">
                     <img
