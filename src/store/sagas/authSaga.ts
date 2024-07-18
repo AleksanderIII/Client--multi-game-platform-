@@ -13,7 +13,6 @@ import { PayloadAction } from "@reduxjs/toolkit";
 
 function* handleLogin(authService: AuthService, action: PayloadAction<{ username: string; password: string }>): SagaIterator {
   try {
-    console.log(authService.login, action.payload);
     const response = yield call([authService, authService.login], action.payload);
     yield put(loginSuccess({ username: action.payload.username }));
   } catch (error) {

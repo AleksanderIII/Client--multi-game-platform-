@@ -67,7 +67,6 @@ export default class ApiService implements IApiService {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    console.log({ ...config, method: "post", url, data });
     return this.request<T>({ ...config, method: "post", url, data });
   }
 

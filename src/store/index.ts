@@ -4,6 +4,7 @@ import createSagaMiddleware from "redux-saga";
 import authReducer from "./slices/auth";
 import gameReducer from "./slices/game";
 import playerReducer from "./slices/player";
+import lobbyReducer from "./slices/lobby";
 
 import authService from "../services/AuthService";
 import gameService from "../services/GameService";
@@ -20,6 +21,7 @@ const store = configureStore({
     auth: authReducer,
     games: gameReducer,
     players: playerReducer,
+    lobby: lobbyReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -28,7 +30,6 @@ const store = configureStore({
 });
 
 // Запуск всех саг
-console.log(authService);
 sagaMiddleware.run(authSaga, authService);
 sagaMiddleware.run(gamesSaga, gameService);
 sagaMiddleware.run(playersSaga, playersService);

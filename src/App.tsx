@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import AppLayout from "./components/Layout/Layout";
 import "./App.less";
+import { WebSocketProvider } from "./context/WebSocketContext"; // импорт WebSocketProvider
 
 const App: React.FC = () => {
   const isAuthenticated = useSelector(
@@ -23,28 +24,27 @@ const App: React.FC = () => {
   );
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route
-            path="games"
-            element={isAuthenticated ? <Games /> : <Navigate to="/login" />}
-          />
-          <Route
-            path="games/:id"
-            element={isAuthenticated ? <Game /> : <Navigate to="/login" />}
-          />
-          <Route
-            path="players"
-            element={isAuthenticated ? <Players /> : <Navigate to="/login" />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
+    <WebSocketProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<Home />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route
+              path="games"
+              element={isAuthenticated ? <Games /> : <Navigate to="/login" />}
+            />
+            <Route path="games/:id" element={<Game />} />
+            <Route
+              path="players"
+              element={isAuthenticated ? <Players /> : <Navigate to="/login" />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </Router>
+    </WebSocketProvider>
   );
 };
 

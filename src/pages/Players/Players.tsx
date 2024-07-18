@@ -20,7 +20,7 @@ const Players: React.FC = () => {
   }
 
   if (error) {
-    return <Alert message={`Error: ${error}`} type="error" />;
+    return <Alert message={`Error: ${error}`} type="error" showIcon />;
   }
 
   return (

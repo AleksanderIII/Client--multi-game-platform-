@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../../store";
 import { fetchGamesStart } from "../../store/slices/game";
 import { Card, Row, Col, Spin, Alert, Tag } from "antd";
-import "./Games.less"; // Создайте файл стилей для дополнительной стилизации
+import "./Games.less";
 
 const { Meta } = Card;
 
@@ -32,19 +32,19 @@ const Games: React.FC = () => {
   };
 
   return (
-    <div className="games-container">
+    <div className={"games-container"}>
       <Row gutter={[16, 16]}>
         {games.length ? (
           games.map((game) => (
             <Col key={game.id} xs={24} sm={12} md={8} lg={6}>
               <Card
-                className="game-card"
+                className={"game-card"} // Используем CSS модули для класса
                 bordered={false}
                 onClick={() => handleCardClick(game.name)}
                 hoverable
               >
-                <div className="card-content">
-                  <div className="card-cover">
+                <div className={"card-content"}>
+                  <div className={"card-cover"}>
                     <img
                       alt={game.name}
                       src={game.imageUrl || "./images/no_image.png"}

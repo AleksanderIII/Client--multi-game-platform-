@@ -4,14 +4,11 @@ class AuthService {
   private apiService: ApiService;
 
   constructor(apiService: ApiService) {
-    console.log(apiService);
     this.apiService = apiService;
   }
 
   async login(credentials: { username: string; password: string }) {
-    console.log("login");
     try {
-      console.log(this.apiService, this);
       const response = await this.apiService.post<any>(
         "/auth/login",
         credentials
