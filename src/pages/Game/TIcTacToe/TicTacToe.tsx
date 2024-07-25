@@ -1,45 +1,74 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { useWebSocket } from "../../../context/WebSocketContext";
+import { updateBoard } from "../../../store/slices/ticTacToe";
+import { HeartFilled, StarFilled } from "@ant-design/icons";
+
 import "./TicTacToe.less";
 
 interface TicTacToeProps {
   player: string;
 }
 
+const SYMBOLS: { [key: string]: JSX.Element } = {
+  X: <HeartFilled className="icon--X" />,
+  O: <StarFilled className="icon--O" />,
+};
+
 const TicTacToe: React.FC<TicTacToeProps> = ({ player }) => {
-  const [board, setBoard] = useState<string[]>(Array(225).fill(""));
-  const [currentPlayer, setCurrentPlayer] = useState<"X" | "O">("X");
-  const [winner, setWinner] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const board = useSelector((state: RootState) => state.ticTacToe.board);
+  const currentPlayer = useSelector(
+    (state: RootState) => state.ticTacToe.currentPlayer
+  );
+  const winner = useSelector((state: RootState) => state.ticTacToe.winner);
+  const gameStarted = useSelector(
+    (state: RootState) => state.ticTacToe.gameStarted
+  );
+  const gameId = useSelector((state: RootState) => state.ticTacToe.gameId);
+  const { sendMessage } = useWebSocket();
 
   const handleCellClick = (index: number) => {
-    if (board[index] === "" && !winner) {
-      const newBoard = board.slice();
-      newBoard[index] = currentPlayer;
-      setBoard(newBoard);
-      checkWinner(newBoard, currentPlayer);
-      setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+    if (
+      !gameStarted ||
+      board[index] !== "" ||
+      winner ||
+      currentPlayer !== player
+    ) {
+      return;
     }
-  };
 
-  const checkWinner = (board: string[], player: "X" | "O") => {
-    // Логика проверки победителя
+    sendMessage({
+      type: "MAKE_MOVE",
+      game: gameId,
+      player,
+      move: {
+        row: Math.floor(index / 15),
+        col: index % 15,
+      },
+    });
+
+    dispatch(updateBoard(board));
   };
 
   return (
     <div className="tic-tac-toe">
-      <h1>Welcome, {player}!</h1>
+      <h1>Tic Tac Toe</h1>
       <div className="board">
         {board.map((cell, index) => (
           <div
+            className={`cell${cell === "X" ? " cell--X" : ""}${
+              cell === "O" ? " cell--O" : ""
+            }`}
             key={index}
-            className="cell"
             onClick={() => handleCellClick(index)}
           >
-            {cell}
+            {SYMBOLS[cell] || cell}
           </div>
         ))}
       </div>
-      {winner && <div className="winner">Winner: {winner}</div>}
-      <div className="turn">Current turn: {currentPlayer}</div>
+      {winner && <h2>Winner: {SYMBOLS[winner] || winner}</h2>}
     </div>
   );
 };

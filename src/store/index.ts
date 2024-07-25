@@ -5,6 +5,7 @@ import authReducer from "./slices/auth";
 import gameReducer from "./slices/game";
 import playerReducer from "./slices/player";
 import lobbyReducer from "./slices/lobby";
+import ticTacToeReducer from "./slices/ticTacToe";
 
 import authService from "../services/AuthService";
 import gameService from "../services/GameService";
@@ -22,6 +23,7 @@ const store = configureStore({
     games: gameReducer,
     players: playerReducer,
     lobby: lobbyReducer,
+    ticTacToe: ticTacToeReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

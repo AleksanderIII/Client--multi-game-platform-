@@ -35,7 +35,7 @@ const lobbySlice = createSlice({
       }
     },
     startGame(state) {
-      state.gameReady = true;
+      state.gameReady = true; // Устанавливаем gameReady в true
     },
     playerJoined(state, action: PayloadAction<string>) {
       if (!state.players.includes(action.payload)) {

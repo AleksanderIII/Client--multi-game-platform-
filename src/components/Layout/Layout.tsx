@@ -11,8 +11,8 @@ const AppLayout: React.FC = () => {
   return (
     <Layout className="layout">
       <HeaderComponent />
-      <Content style={{ padding: "0 50px" }}>
-        <div className="site-layout-content">
+      <Content>
+        <div style={{ paddingTop: "10px" }} className="site-layout-content">
           <Outlet /> {/* Место для отображения текущего контента */}
         </div>
       </Content>

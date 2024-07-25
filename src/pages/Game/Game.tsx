@@ -1,11 +1,24 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Lobby, { generateUUID } from "../../components/Lobby/Lobby";
+import Lobby from "../../components/Lobby/Lobby";
 import PersonalLobby from "../../components/PersonalLobby/PersonalLobby";
 import { useWebSocket } from "../../context/WebSocketContext";
-import { playerJoined } from "../../store/slices/lobby";
+import {
+  playerJoined,
+  playerLeft,
+  setSelectedOpponent,
+  startGame,
+} from "../../store/slices/lobby";
 import { RootState } from "../../store";
+import {
+  setGameId,
+  updateBoard,
+  setCurrentPlayer,
+  setWinner,
+  startGame as startTicTacToeGame,
+  setPlayerSymbols,
+} from "../../store/slices/ticTacToe";
 import TicTacToe from "./TIcTacToe/TicTacToe";
 
 const Game: React.FC = () => {
@@ -13,10 +26,13 @@ const Game: React.FC = () => {
   const dispatch = useDispatch();
   const player = useSelector((state: RootState) => state.auth.username);
   const gameReady = useSelector((state: RootState) => state.lobby.gameReady);
+  const selectedOpponent = useSelector(
+    (state: RootState) => state.lobby.selectedOpponent
+  );
   const personalLobbyId = useSelector(
     (state: RootState) => state.lobby.personalLobbyId
   );
-  const { sendMessage } = useWebSocket();
+  const { sendMessage, addMessageListener } = useWebSocket();
 
   useEffect(() => {
     if (player) {
@@ -25,12 +41,9 @@ const Game: React.FC = () => {
         type: "JOIN_LOBBY",
         game: decodeURIComponent(id || ""),
         player,
-        clientID: generateUUID(),
       });
     }
     return () => {
-      // Оставим комментарий на случай, если потребуется позже
-      /*  
       if (player) {
         dispatch(playerLeft(player));
         sendMessage({
@@ -39,30 +52,45 @@ const Game: React.FC = () => {
           player,
         });
       }
-      */
     };
   }, [dispatch, player, sendMessage, id]);
 
-  const GameComponent = TicTacToe; // Замените на соответствующий компонент вашей игры
+  useEffect(() => {
+    const handleGameUpdate = (message: MessageEvent) => {
+      const data = JSON.parse(message.data);
+      if (data.type === "GAME_STARTED") {
+        dispatch(startTicTacToeGame());
+        dispatch(setGameId(decodeURIComponent(id || "")));
+        dispatch(updateBoard(data.state.board));
+        dispatch(setCurrentPlayer(data.state.currentPlayer));
+        dispatch(setPlayerSymbols(data.state.playerSymbols));
+        dispatch(startGame()); // Устанавливаем gameReady в true
+      } else if (data.type === "GAME_UPDATE") {
+        dispatch(updateBoard(data.state.board));
+        dispatch(setCurrentPlayer(data.state.currentPlayer));
+        dispatch(setWinner(data.state.winner));
+      } else if (data.type === "OPPONENT_SELECTED" && data.player === player) {
+        dispatch(setSelectedOpponent(data.opponent));
+      }
+    };
+
+    addMessageListener(handleGameUpdate);
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, [dispatch, id, addMessageListener, player]);
 
   return (
-    <div>
+    <>
       {gameReady ? (
-        <GameComponent player={player || ""} />
+        <TicTacToe player={player || ""} />
       ) : personalLobbyId ? (
         <PersonalLobby />
       ) : (
-        <Lobby
-          handleStartGame={() =>
-            sendMessage({
-              type: "START_GAME",
-              game: decodeURIComponent(id || ""),
-              player,
-            })
-          }
-        />
+        <Lobby selectedOpponent={selectedOpponent} />
       )}
-    </div>
+    </>
   );
 };
 

@@ -10,7 +10,6 @@ import {
 import { useWebSocket } from "../../context/WebSocketContext";
 import { Card, Button } from "antd";
 
-// Функция для генерации UUID
 export function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
@@ -20,10 +19,10 @@ export function generateUUID() {
 }
 
 interface LobbyProps {
-  handleStartGame: () => void;
+  selectedOpponent: string | null;
 }
 
-const Lobby: React.FC<LobbyProps> = ({ handleStartGame }) => {
+const Lobby: React.FC<LobbyProps> = () => {
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const player = useSelector((state: RootState) => state.auth.username);
   const players = useSelector((state: RootState) => state.lobby.players).filter(
@@ -42,13 +41,18 @@ const Lobby: React.FC<LobbyProps> = ({ handleStartGame }) => {
         dispatch(setPlayers(data.players));
       }
 
-      if (data.type === "OPPONENT_SELECTED" && data.game === gameName) {
+      if (
+        data.type === "OPPONENT_SELECTED" &&
+        data.game === gameName &&
+        data.player === player
+      ) {
         dispatch(setSelectedOpponent(data.opponent));
+        setSelectedPlayer(data.opponent);
       }
 
       if (data.type === "PERSONAL_LOBBY_START" && data.game === gameName) {
         dispatch(startPersonalLobby(data.personalLobbyId));
-        //  navigate(`/game/${data.personalLobbyId}`); // Переход на страницу игры
+        navigate(`/game/${data.personalLobbyId}`);
       }
     };
 
@@ -62,11 +66,7 @@ const Lobby: React.FC<LobbyProps> = ({ handleStartGame }) => {
     });
 
     return () => {
-      /*     sendMessage({
-        type: "LEAVE_LOBBY",
-        game: gameName,
-        player,
-      });*/
+      // Optional cleanup
     };
   }, [gameName, player, dispatch, sendMessage, addMessageListener, navigate]);
 
@@ -75,6 +75,7 @@ const Lobby: React.FC<LobbyProps> = ({ handleStartGame }) => {
     sendMessage({
       type: "SELECT_OPPONENT",
       game: gameName,
+      player,
       opponent,
     });
   };

@@ -6,8 +6,8 @@ import { useWebSocket } from "../../context/WebSocketContext";
 import { Button, Card } from "antd";
 
 const PersonalLobby: React.FC = () => {
-  const players = useSelector((state: RootState) => state.lobby.players);
   const player = useSelector((state: RootState) => state.auth.username);
+  const players = useSelector((state: RootState) => state.lobby.players);
   const personalLobbyId = useSelector(
     (state: RootState) => state.lobby.personalLobbyId
   );
@@ -21,17 +21,15 @@ const PersonalLobby: React.FC = () => {
     const handleMessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "START_GAME" && data.game === "Tic tac toe") {
-        dispatch(startGame()); // Вызываем экшн для обновления состояния
+      if (data.type === "START_GAME") {
+        dispatch(startGame());
       }
     };
 
-    // Добавляем слушатель для сообщений WebSocket
     addMessageListener(handleMessage);
 
     return () => {
-      // Удаляем слушатель при размонтировании компонента
-      //   removeMessageListener(handleMessage);
+      // Cleanup if needed
     };
   }, [dispatch, addMessageListener]);
 

@@ -17,6 +17,7 @@ import { RootState } from "./store";
 import AppLayout from "./components/Layout/Layout";
 import "./App.less";
 import { WebSocketProvider } from "./context/WebSocketContext"; // импорт WebSocketProvider
+import TicTacToe from "./pages/Game/TIcTacToe/TicTacToe";
 
 const App: React.FC = () => {
   const isAuthenticated = useSelector(
@@ -31,6 +32,7 @@ const App: React.FC = () => {
             <Route index element={<Home />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="1" element={<TicTacToe player="sss" />} />
             <Route
               path="games"
               element={isAuthenticated ? <Games /> : <Navigate to="/login" />}
