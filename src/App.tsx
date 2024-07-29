@@ -18,6 +18,7 @@ import AppLayout from "./components/Layout/Layout";
 import "./App.less";
 import { WebSocketProvider } from "./context/WebSocketContext"; // импорт WebSocketProvider
 import TicTacToe from "./pages/Game/TIcTacToe/TicTacToe";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 const App: React.FC = () => {
   const isAuthenticated = useSelector(
@@ -35,7 +36,16 @@ const App: React.FC = () => {
             <Route path="1" element={<TicTacToe player="sss" />} />
             <Route
               path="games"
-              element={isAuthenticated ? <Games /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? (
+                  <ErrorBoundary>
+                    {" "}
+                    <Games />
+                  </ErrorBoundary>
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
             <Route path="games/:id" element={<Game />} />
             <Route

@@ -1,81 +1,72 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../../store";
-import { fetchGamesStart } from "../../store/slices/game";
-import { Card, Row, Col, Spin, Alert, Tag } from "antd";
-import "./Games.less";
+import { Row, Col, Spin, Alert } from "antd";
 
-const { Meta } = Card;
+import GameCard from "./GameCard";
+import { RootState } from "../../store";
+import useFetchData from "../../hooks/useFetchData";
+import { fetchGamesStart, removeGameStart } from "../../store/slices/game";
+import { Game } from "../../models";
+
+import "./Games.less";
+import { useDispatch } from "react-redux";
 
 const Games: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const games = useSelector((state: RootState) => state.games.list);
-  const loading = useSelector((state: RootState) => state.games.loading);
-  const error = useSelector((state: RootState) => state.games.error);
-
-  useEffect(() => {
-    dispatch(fetchGamesStart());
-  }, [dispatch]);
-
-  if (loading) {
-    return <Spin tip="Loading..." />;
-  }
-
-  if (error) {
-    return <Alert message="Error" description={error} type="error" showIcon />;
-  }
+  const dispatch = useDispatch();
+  const {
+    data: games,
+    loading,
+    error,
+  } = useFetchData<Game[]>({
+    fetchAction: fetchGamesStart,
+    dataSelector: (state: RootState) => state.games.list,
+    loadingSelector: (state: RootState) => state.games.loading,
+    errorSelector: (state: RootState) => state.games.error,
+  });
 
   const handleCardClick = (name: string) => {
     navigate(`/games/${name}`);
   };
 
+  const handleDeleteClick = (id: number) => {
+    dispatch(removeGameStart(id));
+    console.log(`delete ${id}`);
+  };
+
+  const handleUpdateClick = (id: number) => {
+    console.log(`update ${id}`);
+  };
+
+  if (error) {
+    return <Alert message="Error" description={error} type="error" showIcon />;
+  }
+
   return (
     <div className={"games-container"}>
       <Row gutter={[16, 16]}>
         {games.length ? (
-          games.map((game) => (
-            <Col key={game.id} xs={24} sm={12} md={8} lg={6}>
-              <Card
-                className={"game-card"} // Используем CSS модули для класса
-                bordered={false}
-                onClick={() => handleCardClick(game.name)}
-                hoverable
-              >
-                <div className={"card-content"}>
-                  <div className={"card-cover"}>
-                    <img
-                      alt={game.name}
-                      src={game.imageUrl || "./images/no_image.png"}
-                    />
-                  </div>
-                  <Meta
-                    title={game.name}
-                    description={
-                      <>
-                        <p>
-                          <strong>Genre:</strong> {game.genre}
-                        </p>
-                        <p>
-                          <strong>Release Date:</strong>{" "}
-                          {game.releaseDate
-                            ? new Date(game.releaseDate).toLocaleDateString()
-                            : "TBA"}
-                        </p>
-                        <p>
-                          <strong>Status:</strong>{" "}
-                          <Tag color={game.isReleased ? "green" : "red"}>
-                            {game.isReleased ? "Released" : "Unreleased"}
-                          </Tag>
-                        </p>
-                      </>
-                    }
-                  />
-                </div>
-              </Card>
-            </Col>
-          ))
+          [...games]
+            .sort((a, b) => {
+              if (a.isReleased && !b.isReleased) {
+                return -1;
+              } else if (!a.isReleased && b.isReleased) {
+                return 1;
+              } else {
+                return 0;
+              }
+            })
+            .map((game) => (
+              <Col key={game.id} xs={24} sm={12} md={8} lg={6}>
+                <GameCard
+                  key={`${game.id}-card`}
+                  game={game}
+                  loading={loading}
+                  handleCardClick={handleCardClick}
+                  handleDeleteClick={handleDeleteClick}
+                  handleUpdateClick={handleUpdateClick}
+                />
+              </Col>
+            ))
         ) : (
           <Col span={24}>
             <p>No data</p>

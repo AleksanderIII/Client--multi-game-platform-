@@ -27,6 +27,9 @@ const TicTacToe: React.FC<TicTacToeProps> = ({ player }) => {
     (state: RootState) => state.ticTacToe.gameStarted
   );
   const gameId = useSelector((state: RootState) => state.ticTacToe.gameId);
+  const playersSymbols = useSelector(
+    (state: RootState) => state.ticTacToe.playerSymbols
+  );
   const { sendMessage } = useWebSocket();
 
   const handleCellClick = (index: number) => {
@@ -68,7 +71,14 @@ const TicTacToe: React.FC<TicTacToeProps> = ({ player }) => {
           </div>
         ))}
       </div>
-      {winner && <h2>Winner: {SYMBOLS[winner] || winner}</h2>}
+      {winner && (
+        <h2>
+          Winner:{" "}
+          {Object.keys(playersSymbols).filter(
+            (item) => playersSymbols[item] === winner
+          )}
+        </h2>
+      )}
     </div>
   );
 };

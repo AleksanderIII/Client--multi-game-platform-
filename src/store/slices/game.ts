@@ -30,8 +30,27 @@ const gamesSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    removeGameStart(state, action: PayloadAction<number>) {
+      state.loading = true;
+      state.error = null;
+    },
+    removeGameSuccess(state, action: PayloadAction<number>) {
+      state.loading = false;
+      state.list = state.list.filter((game) => game.id !== action.payload);
+    },
+    removeGameFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { fetchGamesStart, fetchGamesSuccess, fetchGamesFailure } = gamesSlice.actions;
+export const {
+  fetchGamesStart,
+  fetchGamesSuccess,
+  fetchGamesFailure,
+  removeGameStart,
+  removeGameSuccess,
+  removeGameFailure,
+} = gamesSlice.actions;
 export default gamesSlice.reducer;

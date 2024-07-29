@@ -20,6 +20,7 @@ import {
   setPlayerSymbols,
 } from "../../store/slices/ticTacToe";
 import TicTacToe from "./TIcTacToe/TicTacToe";
+import Chat from "../../components/Chat/Chat";
 
 const Game: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -84,7 +85,18 @@ const Game: React.FC = () => {
   return (
     <>
       {gameReady ? (
-        <TicTacToe player={player || ""} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr",
+            columnGap: "10px",
+            width: "100%",
+            flexDirection: "row",
+          }}
+        >
+          <TicTacToe player={player || ""} />
+          <Chat id={id!} player={player || ""} game={"Tic tac toe"} />
+        </div>
       ) : personalLobbyId ? (
         <PersonalLobby />
       ) : (

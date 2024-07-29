@@ -3,6 +3,7 @@ import React, { createContext, useContext, useRef } from "react";
 interface WebSocketContextType {
   sendMessage: (message: any) => void;
   addMessageListener: (listener: (event: MessageEvent) => void) => void;
+  removeMessageListener: (listener: (event: MessageEvent) => void) => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextType | undefined>(
@@ -38,9 +39,16 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
+    const removeMessageListener = (listener: (event: MessageEvent) => void) => {
+      if (wsRef.current) {
+        wsRef.current.removeEventListener("message", listener);
+      }
+    };
+
     return {
       sendMessage,
       addMessageListener,
+      removeMessageListener,
     };
   };
 
@@ -56,6 +64,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         sendMessage: connect().sendMessage,
         addMessageListener: connect().addMessageListener,
+        removeMessageListener: connect().removeMessageListener,
       }}
     >
       {children}

@@ -46,7 +46,7 @@ class GameService {
     }
   }
 
-  async deleteGame(id: string) {
+  async deleteGame(id: number) {
     try {
       const response = await this.apiService.delete<Game>(`/games/${id}`);
       return response.data;
